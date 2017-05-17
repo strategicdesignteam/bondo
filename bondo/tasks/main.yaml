@@ -11,5 +11,5 @@
     password: "{{ password }}"
     force_basic_auth: yes
     creates: myplaybook.yaml
-    dest: /tmp
+    dest: /var/lib/awx/projects
   register: output2
