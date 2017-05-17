@@ -18,3 +18,5 @@
     url:  https://access.redhat.com/r/insights/v3/maintenance/{{ maint_plan_id }}/playbook
     dest: /var/lib/awx/projects/myplaybook.yaml
     force_basic_auth: yes
+    url_username: "{{ username }}"
+    url_password: "{{ password }}"
