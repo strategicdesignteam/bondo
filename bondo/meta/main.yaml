@@ -1,0 +1,16 @@
+---
+galaxy_info:
+    author: James Labocki
+    description: Downloads playbooks for an Insights Maintenance Plan and upload to GIT repo
+    company: Red Hat, Inc.
+    license: MIT
+    min_ansible_version: 1.2
+    platforms:
+    - name: EL
+      versions:
+      - 6
+      - 7
+    categories:
+    - packaging
+    - system
+    dependencies: []

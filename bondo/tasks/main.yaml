@@ -1,0 +1,6 @@
+---
+
+- name: Test
+  command: echo {{ maint_plan_id }} {{ infrastructure_id }}
+
+
