@@ -11,12 +11,12 @@
     password: "{{ password }}"
     force_basic_auth: yes
     creates: myplaybook.yaml
-    dest: /var/lib/awx/projects/
+    dest: /opt/tmp
 
 - name: Second Test
   get_url:
     url:  https://access.redhat.com/r/insights/v3/maintenance/{{ maint_plan_id }}/playbook
-    dest: /var/lib/awx/projects/myplaybook.yaml
+    dest: /opt/tmp/myplaybook.yaml
     force_basic_auth: yes
     url_username: "{{ username }}"
     url_password: "{{ password }}"
