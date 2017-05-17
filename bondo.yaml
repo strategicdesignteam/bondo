@@ -1,4 +1,4 @@
-- hosts: tag_openshift_role
+- hosts: localhost
   become: no
   roles:
   - { role: bondo, when: ansible_os_family == 'RedHat' }

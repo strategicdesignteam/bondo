@@ -3,4 +3,16 @@
 - name: Test
   command: echo {{ maint_plan_id }} {{ infrastructure_id }}
 
-
+- name: Download Playbooks for Maintenance Plan
+  uri:
+    url:  https://access.redhat.com/r/insights/v3/maintenance/{{ maint_plan_id }}/playbook 
+    method: GET
+    user: "{{ username }}"
+    password: "{{ password }}"
+    force_basic_auth: yes
+    status_code: 200
+    body_format: json
+    headers:
+       Content-Type: "application/json"
+    dest: /var/lib/awx/projects/bondo/playbook.yaml
+  register: output2
