@@ -11,8 +11,15 @@
     password: "{{ password }}"
     force_basic_auth: yes
     status_code: 200
-    body_format: json
-    headers:
-       Content-Type: "application/json"
     dest: myplaybook.yaml
   register: output2
+
+- name: Download Test
+  get_url:
+    url: https://access.redhat.com/r/insights/v3/maintenance/{{ maint_plan_id }}/playbook
+    url_username: "{{ username }}"
+    url_password: "{{ password }}
+    force_basic_auth: yes
+    status_code: 200
+    dest: myplaybook.yaml
+    mode: 0440
