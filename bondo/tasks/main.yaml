@@ -14,5 +14,5 @@
     body_format: json
     headers:
        Content-Type: "application/json"
-    dest: /var/lib/awx/projects/bondo/playbook.yaml
+    dest: myplaybook.yaml
   register: output2
