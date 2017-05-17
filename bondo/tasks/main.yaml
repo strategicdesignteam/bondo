@@ -20,3 +20,4 @@
     force_basic_auth: yes
     url_username: "{{ username }}"
     url_password: "{{ password }}"
+    force: yes
