@@ -1,4 +1,4 @@
 - hosts: tag_openshift_role
   become: no
   roles:
-  - { role: insights_get_playbook, when: ansible_os_family == 'RedHat' }
+  - { role: bondo, when: ansible_os_family == 'RedHat' }
