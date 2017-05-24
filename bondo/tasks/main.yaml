@@ -1,23 +1,49 @@
 ---
 
-- name: Test
-  command: echo {{ maint_plan_id }} {{ infrastructure_id }}
+- name: Create Github Repo
+  uri:
+    url: https://api.github.com/orgs/strategicdesignteam/repos
+    force_basic_auth: yes
+    become: true
+    method: POST
+    user: "{{ git_username }}"
+    password: "{{ git_password }}"
+    body_format: json
+    status_code: 201
+    headers:
+       Content-Type: "application/json"
+    body: 
+      name: insights_for_{{ infrastructure_id }}
+  register: output
+
+- name: clone git repo
+  command: git clone https://github.com/strategicdesignteam/insights_for_{{ infrastructure_id }}.git /opt/tmp/insights_plan_{{ infrastructure_id }}
 
 - name: Download Playbooks for Maintenance Plan
   uri:
-    url:  https://access.redhat.com/r/insights/v3/maintenance/{{ maint_plan_id }}/playbook 
+    url:  https://access.redhat.com/r/insights/v3/maintenance/{{ maint_plan_id }}/playbook
+    become: true
     method: GET
-    user: "{{ username }}"
-    password: "{{ password }}"
+    user: "{{ rh_username }}"
+    password: "{{ rh_password }}"
     force_basic_auth: yes
     creates: myplaybook.yaml
-    dest: /opt/tmp
+    dest: /opt/tmp/insights_plan_{{ infrastructure_id }}
 
-- name: Second Test
-  get_url:
-    url:  https://access.redhat.com/r/insights/v3/maintenance/{{ maint_plan_id }}/playbook
-    dest: /opt/tmp/myplaybook.yaml
-    force_basic_auth: yes
-    url_username: "{{ username }}"
-    url_password: "{{ password }}"
-    force: yes
+- name: Add files to git
+  command: git add playbook
+  args:
+    chdir: /opt/tmp/insights_plan_{{ infrastructure_id }}
+
+- name: Commit
+  command: git commit -m "Adding playbook"
+  args:
+    chdir: /opt/tmp/insights_plan_{{ infrastructure_id }}
+
+- name: Sleep just in case
+  command: sleep 5
+
+- name: Push files to git
+  command: git push https://{{ git_username }}:{{ git_password }}@github.com/strategicdesignteam/insights_for_{{ infrastructure_id }}.git master
+  args:
+    chdir: /opt/tmp/insights_plan_{{ infrastructure_id }}
