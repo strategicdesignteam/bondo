@@ -30,8 +30,12 @@
     creates: myplaybook.yaml
     dest: /opt/tmp/insights_plan_{{ infrastructure_id }}
 
+- name: Rename playbook
+  command: mv /opt/tmp/insights_plan_{{ infrastructure_id }}/playbook /opt/tmp/insights_plan_{{ infrastructure_id }}/playbook.yaml
+  
+
 - name: Add files to git
-  command: git add playbook
+  command: git add playbook.yaml
   args:
     chdir: /opt/tmp/insights_plan_{{ infrastructure_id }}
 
@@ -41,9 +45,42 @@
     chdir: /opt/tmp/insights_plan_{{ infrastructure_id }}
 
 - name: Sleep just in case
-  command: sleep 5
+  command: sleep 3
 
 - name: Push files to git
   command: git push https://{{ git_username }}:{{ git_password }}@github.com/strategicdesignteam/insights_for_{{ infrastructure_id }}.git master
   args:
     chdir: /opt/tmp/insights_plan_{{ infrastructure_id }}
+
+- name: Create project in Tower
+  tower_project:
+    name: insights_for_{{ infrastructure_id }}
+    description: "insights for infrastructure"
+    organization: "Default"
+    scm_url: https://github.com/strategicdesignteam/insights_for_{{ infrastructure_id }}.git
+    scm_type: git
+    scm_branch: master
+    scm_update_on_launch: true
+    state: present
+    tower_config_file: "~/.tower_cli.cfg"
+
+- name: Sync project
+  command: tower-cli project update -n insights_for_{{ infrastructure_id }} 
+
+- name: Sleep just in case
+  command: sleep 6
+
+- name: Create openshift-ansible-contrib job template
+  tower_job_template:
+    name: insights_for_{{ infrastructure_id }}
+    job_type: run
+    inventory: aws-inventory
+    project: insights_for_{{ infrastructure_id }}
+    playbook: "playbook.yaml"
+    machine_credential: aws-privkey
+    cloud_credential: ec2
+    state: present
+    tower_config_file: "~/.tower_cli.cfg"
+
+- name: Launch a job
+  command:  tower-cli job launch -J insights_for_{{ infrastructure_id }}
